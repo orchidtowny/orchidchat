@@ -43,7 +43,7 @@ description = '''${mod_description}'''
 
 [[dependencies."${mod_id}"]]
 modId="luckperms"
-mandatory=false
-versionRange=""
+mandatory=true
+versionRange="[5.4.0,)"
 ordering="AFTER"
 side="SERVER"

@@ -38,10 +38,6 @@ minecraft {
             }
         }
 
-        client {
-            property 'forge.enabledGameTestNamespaces', mod_id
-        }
-
         server {
             property 'forge.enabledGameTestNamespaces', mod_id
             args '--nogui'
@@ -55,17 +51,13 @@ minecraft {
     }
 }
 
-/*
-mixin {
-    add sourceSets.main, "${mod_id}.refmap.json"
-
-    config "${mod_id}.mixins.json"
-}
-* */
-
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
+    flatDir {
+        dir 'libs'
+    }
+
     mavenCentral()
 }
 
@@ -76,10 +68,14 @@ dependencies {
 
     minecraftLibrary 'net.kyori:adventure-text-minimessage:5.1.1'
     minecraftLibrary 'net.kyori:adventure-text-serializer-gson:5.1.1'
-    minecraftLibrary 'net.luckperms:api:5.4'
 
     jarJar(group: 'net.kyori', name: 'adventure-text-minimessage', version: '[5.1.1]')
     jarJar(group: 'net.kyori', name: 'adventure-text-serializer-gson', version: '[5.1.1]')
+
+    compileOnly fg.deobf('net.luckperms:api:5.4')
+
+    // Server-side mods for runServer task
+    runtimeOnly fg.deobf('libs:LuckPerms-Forge:5.4.102')
 }
 
 processResources {

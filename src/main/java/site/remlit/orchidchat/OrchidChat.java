@@ -1,6 +1,10 @@
 package site.remlit.orchidchat;
 
 import com.mojang.logging.LogUtils;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.server.ServerStartedEvent;
+import net.minecraftforge.event.server.ServerStartingEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -18,17 +22,22 @@ public class OrchidChat {
 	private ChatService chatService;
 
 	public OrchidChat() {
+		MinecraftForge.EVENT_BUS.register(this);
+
+		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.SPEC);
+	}
+
+	@SubscribeEvent
+	public void onServerStart(ServerStartingEvent event) {
 		try {
 			luckpermsService = new LuckpermsService();
 			luckpermsService.register();
-		} catch (Exception e) {
+		} catch (NoClassDefFoundError e) {
 			LOGGER.warn("Luckperms not found, related features will be disabled.");
 		}
 
 		chatService = new ChatService(luckpermsService);
 		chatService.register();
-
-		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.SPEC);
 
 		LOGGER.info("Finished startup!");
 	}

@@ -7,20 +7,21 @@ import net.minecraftforge.fml.event.config.ModConfigEvent;
 
 @Mod.EventBusSubscriber(modid = OrchidChat.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class Config {
+
 	private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
 
 
 	private static final ForgeConfigSpec.ConfigValue<String> FORMAT = BUILDER
 			.comment("""
-					Format to use for chat, MiniMessage allowed.
+					 Format to use for chat, MiniMessage allowed.
 					
-					Placeholders:
-					%name%						Player's name
-					%msg% 						Message
+					 Placeholders:
+					 %name%						Player's name
+					 %msg% 						Message
 					
-					%luckperms_prefix%			Luckperms prefix
-					%luckperms_suffix%			Luckperms suffix
-					%luckperms_meta_<value>%	Luckperms meta value
+					 %luckperms_prefix%			Luckperms prefix
+					 %luckperms_suffix%			Luckperms suffix
+					 %luckperms_meta_<value>%	Luckperms meta value
 					""")
 			.define(
 					"format",
@@ -43,4 +44,5 @@ public class Config {
 	static void onLoad(final ModConfigEvent event) {
 		format = FORMAT.get();
 	}
+
 }
