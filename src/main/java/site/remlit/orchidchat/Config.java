@@ -19,12 +19,12 @@ public final class Config {
 					 Format to use for chat, MiniMessage allowed.
 					
 					 Placeholders:
-					 %name%						Player's name
-					 %msg% 						Message
+					 %name% - Player's name
+					 %msg% - Message
 					
-					 %luckperms_prefix%			Luckperms prefix
-					 %luckperms_suffix%			Luckperms suffix
-					 %luckperms_meta_<value>%	Luckperms meta value
+					 %luckperms_prefix% - LuckPerms prefix
+					 %luckperms_suffix% - LuckPerms suffix
+					 %luckperms_meta_<value>% - LuckPerms meta value
 					""")
 			.define(
 					"format",

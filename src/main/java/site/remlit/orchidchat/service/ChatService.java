@@ -9,12 +9,12 @@ import net.luckperms.api.cacheddata.CachedMetaData;
 import net.luckperms.api.model.user.User;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import site.remlit.orchidchat.Config;
-import site.remlit.orchidchat.OrchidChat;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -22,43 +22,49 @@ import java.util.Objects;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 
-@Mod.EventBusSubscriber(
-		modid = OrchidChat.MODID,
-		bus = Mod.EventBusSubscriber.Bus.MOD
-)
 public class ChatService {
 
-	public @Nullable LuckPermsService luckpermsService;
+	public @Nullable LuckPermsService luckPermsService;
 
-	public ChatService(@Nullable LuckPermsService luckpermsService) {
-		this.luckpermsService = luckpermsService;
+	public ChatService(@Nullable LuckPermsService luckPermsService) {
+		this.luckPermsService = luckPermsService;
 	}
 
 
-	private static final Logger LOGGER = LogUtils.getLogger();
+	private static final @NotNull Logger LOGGER = LogUtils.getLogger();
+
+	private static final @NotNull MiniMessage MM = MiniMessage.miniMessage();
+	private static final @NotNull JSONComponentSerializer JCS = GsonComponentSerializer.gson();
+	private static final @NotNull Pattern LUCKPERMS_META_PATTERN = Pattern.compile("%luckperms_meta_([a-zA-Z0-9]*)%");
 
 
-	private static final MiniMessage MM = MiniMessage.miniMessage();
-	private static final JSONComponentSerializer JCS = GsonComponentSerializer.gson();
-	private static final Pattern LUCKPERMS_META_PATTERN = Pattern.compile("%luckperms_meta_([a-zA-Z0-9]*)%");
+	public void register() {
+		MinecraftForge.EVENT_BUS.register(this);
+	}
+
 
 	@SubscribeEvent
-	public void onServerChatEvent(ServerChatEvent event) {
-		try {
-			String formatted;
-			String format = Config.format;
+	public void onServerChatEvent(@Nullable ServerChatEvent event) {
+		if (Objects.isNull(event)) return;
 
-			String name = event.getUsername();
+		try {
+			String formatted = Config.format;
+
+			String name = event.getPlayer().getDisplayName().getString();
 			String message = event.getRawText();
 
 
-			formatted = format
+			formatted = formatted
 					.replace("%name%", name)
 					.replace("%msg%", message);
 
 
-			if (!Objects.isNull(luckpermsService) && luckpermsService.enabled) {
-				User lpUser = luckpermsService.api.getUserManager()
+			if (
+					!Objects.isNull(luckPermsService) &&
+					luckPermsService.enabled &&
+					!Objects.isNull(luckPermsService.api)
+			) {
+				User lpUser = luckPermsService.api.getUserManager()
 						.getUser(event.getPlayer().getUUID());
 				if (Objects.isNull(lpUser)) return;
 
@@ -71,7 +77,7 @@ public class ChatService {
 				String suffix = cachedMetaData.getSuffix();
 				if (Objects.isNull(suffix)) suffix = "";
 
-				formatted = format
+				formatted = formatted
 						.replace("%luckperms_prefix%", prefix)
 						.replace("%luckperms_suffix%", suffix);
 
@@ -101,7 +107,7 @@ public class ChatService {
 					.fromJson(rawJson);
 
 
-			event.cancel();
+			event.setCanceled(true);
 
 			if (Objects.isNull(finalMessage)) return;
 
@@ -115,7 +121,7 @@ public class ChatService {
 			for (ServerPlayer player : server.getPlayerList().getPlayers()) {
 				player.sendSystemMessage(finalMessage);
 			}
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			LOGGER.error("Failed to modify chat! " + e.getLocalizedMessage(), e);
 		}
 	}
