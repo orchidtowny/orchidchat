@@ -16,7 +16,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
-import site.remlit.orchidchat.Config;
+import site.remlit.orchidchat.model.config.DeterminedChannel;
 
 import java.util.List;
 import java.util.Objects;
@@ -91,28 +91,24 @@ public class ChatService {
 
 
 	@SubscribeEvent
-	public void onServerChatEvent(@Nullable ServerChatEvent event) {
-		if (Objects.isNull(event)) return;
-
-
+	public void onServerChatEvent(ServerChatEvent event) {
 		try {
 			Player player = event.getPlayer();
 			String name = player.getDisplayName().getString();
 			String message = event.getRawText();
 
-			String channel = channelService.determineChannel(player, message);
-			String formatted = channelService.getFormat(channel);
+			DeterminedChannel determinedChannel = channelService.determineChannel(player, message);
+			String formatted = channelService.getFormat(determinedChannel.channel);
+
+			if (!Objects.isNull(determinedChannel.usedChannelShortcut))
+				message = message.replaceFirst(determinedChannel.usedChannelShortcut, "");
 
 			formatted = formatted
 					.replace("%name%", name)
 					.replace("%msg%", message);
 
 
-			if (
-					!Objects.isNull(luckPermsService) &&
-					luckPermsService.enabled &&
-					!Objects.isNull(luckPermsService.api)
-			) {
+			if (luckPermsService.enabled && !Objects.isNull(luckPermsService.api)) {
 				User lpUser = luckPermsService.api.getUserManager()
 						.getUser(event.getPlayer().getUUID());
 				if (Objects.isNull(lpUser)) return;
@@ -154,7 +150,7 @@ public class ChatService {
 			event.setCanceled(true);
 
 			this.sendMessage(
-					channel,
+					determinedChannel.channel,
 					player,
 					server.getPlayerList().getPlayers().stream()
 							.map(it -> (Player)it).toList(),

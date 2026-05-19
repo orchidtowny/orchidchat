@@ -18,7 +18,7 @@ public class LuckPermsService {
 		api = LuckPermsProvider.get();
 		enabled = true;
 
-		LOGGER.info("LuckPerms hook loaded.");
+		LOGGER.info("LuckPerms hook loaded");
 	}
 
 }

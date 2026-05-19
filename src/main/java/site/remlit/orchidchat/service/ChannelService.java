@@ -12,14 +12,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import site.remlit.orchidchat.Config;
+import site.remlit.orchidchat.model.config.DeterminedChannel;
 
 import java.util.*;
 
 public class ChannelService {
 
-	public @Nullable LuckPermsService luckPermsService;
+	public LuckPermsService luckPermsService;
 
-	public ChannelService(@Nullable LuckPermsService luckPermsService) {
+	public ChannelService(LuckPermsService luckPermsService) {
 		this.luckPermsService = luckPermsService;
 	}
 
@@ -75,7 +76,7 @@ public class ChannelService {
 		// No permission required if set null
 		if (Objects.isNull(requiredPerm)) return true;
 
-		if (Objects.isNull(luckPermsService) || luckPermsService.enabled || Objects.isNull(luckPermsService.api))
+		if (!luckPermsService.enabled || Objects.isNull(luckPermsService.api))
 			return false;
 
 		User user = luckPermsService.api.getUserManager().getUser(player.getUUID());
@@ -94,10 +95,11 @@ public class ChannelService {
 	 *
 	 * @return Name of channel
 	 * */
-	public @NotNull String determineChannel(
+	public @NotNull DeterminedChannel determineChannel(
 			@NotNull Player sender,
 			@NotNull String rawMessage
 	) {
+		String usedShortcut = null;
 		String channel = "global";
 
 		// TODO: allow setting channel to persist, then check sender against list.
@@ -108,12 +110,16 @@ public class ChannelService {
 			for (String shortcut : shortcuts) {
 				if (rawMessage.startsWith(shortcut)) {
 					channel = c;
+					usedShortcut = shortcut;
 					break;
 				}
 			}
 		}
 
-		return channel;
+		return new DeterminedChannel(
+				channel,
+				usedShortcut
+		);
 	}
 
 	/**
