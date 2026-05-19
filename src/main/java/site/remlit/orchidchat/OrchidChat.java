@@ -3,6 +3,7 @@ package site.remlit.orchidchat;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.server.ServerStartedEvent;
+import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -30,15 +31,12 @@ public final class OrchidChat {
 
 	public OrchidChat() {
 		MinecraftForge.EVENT_BUS.register(this);
-
-		// This warning can be ignored, it's for a future version of Forge, not this one
-		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);
 	}
 
 
 	@SubscribeEvent
-	public void onServerStart(@Nullable ServerStartedEvent event) {
-		if (Objects.isNull(event)) return;
+	public void onServerStart(ServerStartedEvent event) {
+		Config.loadConfig();
 
 		try {
 			luckPermsService = new LuckPermsService();
@@ -57,4 +55,9 @@ public final class OrchidChat {
 		LOGGER.info("Finished startup!");
 	}
 
+	@SubscribeEvent
+	public void onServerStopping(ServerStoppingEvent event) {
+		LOGGER.info("Writing config before shutdown...");
+		Config.writeMemoryConfig();
+	}
 }

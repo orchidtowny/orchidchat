@@ -25,12 +25,12 @@ import java.util.regex.Pattern;
 
 public class ChatService {
 
-	public @Nullable LuckPermsService luckPermsService;
-	public @Nullable ChannelService channelService;
+	public @NotNull LuckPermsService luckPermsService;
+	public @NotNull ChannelService channelService;
 
 	public ChatService(
-			@Nullable LuckPermsService luckPermsService,
-			@Nullable ChannelService channelService
+			@NotNull LuckPermsService luckPermsService,
+			@NotNull ChannelService channelService
 	) {
 		this.luckPermsService = luckPermsService;
 		this.channelService = channelService;
@@ -57,16 +57,20 @@ public class ChatService {
 	 * Send a message to a channel
 	 *
 	 * @param channel Channel to send to
+	 * @param sender Message sender
 	 * @param players List of players on the server,
 	 *                or at least the targets of this message
 	 * @param formatted Formatted message
 	 * */
 	public void sendMessage(
 			@NotNull String channel,
+			@NotNull Player sender,
 			@NotNull List<Player> players,
 			@NotNull String formatted
 	) {
-		boolean skipExpensiveLookup = !Objects.isNull(channelService) && channelService.channels.get(channel) == null;
+		if (!channelService.canPlayerSee(channel, sender)) return;
+
+		boolean skipExpensiveLookup = channelService.channels.get(channel) == null;
 
 		Component miniMessage = MM.deserialize(formatted.trim());
 		String rawJson = JCS.serialize(miniMessage);
@@ -78,7 +82,7 @@ public class ChatService {
 		LOGGER.info("[{}] {}", channel, finalMessage.getString());
 
 		for (Player player : players) {
-			if (!skipExpensiveLookup && !Objects.isNull(channelService) && !channelService.canPlayerSee(channel, player))
+			if (!skipExpensiveLookup && !channelService.canPlayerSee(channel, player))
 				continue;
 
 			player.sendSystemMessage(finalMessage);
@@ -92,15 +96,12 @@ public class ChatService {
 
 
 		try {
-			String channel = "global";
-			String formatted = Config.format;
-
 			Player player = event.getPlayer();
 			String name = player.getDisplayName().getString();
 			String message = event.getRawText();
 
-			if (!Objects.isNull(channelService))
-				channel = channelService.determineChannel(player, message);
+			String channel = channelService.determineChannel(player, message);
+			String formatted = channelService.getFormat(channel);
 
 			formatted = formatted
 					.replace("%name%", name)
@@ -154,6 +155,7 @@ public class ChatService {
 
 			this.sendMessage(
 					channel,
+					player,
 					server.getPlayerList().getPlayers().stream()
 							.map(it -> (Player)it).toList(),
 					formatted

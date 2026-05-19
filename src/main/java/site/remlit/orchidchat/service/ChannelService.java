@@ -13,9 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import site.remlit.orchidchat.Config;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class ChannelService {
 
@@ -28,8 +26,8 @@ public class ChannelService {
 
 	private static final @NotNull Logger LOGGER = LogUtils.getLogger();
 
-	public Map<@NotNull String, @Nullable PermissionNode> channels = Map.of();
-	public Map<@NotNull String, @NotNull List<String>> channelShortcuts = Map.of();
+	public HashMap<@NotNull String, @Nullable PermissionNode> channels = new HashMap<>();
+	public HashMap<@NotNull String, @NotNull List<String>> channelShortcuts = new HashMap<>();
 
 
 	/**
@@ -56,7 +54,7 @@ public class ChannelService {
 		if (channels.containsKey(name))
 			throw new IllegalArgumentException("This channel already is registered!");
 
-		LOGGER.info("Created channel {}, permission: {}", name, (Objects.isNull(perm) ? "none" : perm));
+		LOGGER.info("Created channel {}, permission: {}", name, (Objects.isNull(perm) ? "none" : perm.getPermission()));
 		channels.put(name, perm);
 	}
 
@@ -118,11 +116,27 @@ public class ChannelService {
 		return channel;
 	}
 
+	/**
+	 * Get the chat format for a channel.
+	 *
+	 * @param channel Channel to get the format of
+	 *
+	 * @return Channel format, default if not found
+	 * */
+	public @Nullable String getFormat(
+			@NotNull String channel
+	) {
+		String specifiedChannelFormat = Config.formats.get(channel);
+
+		if (!Objects.isNull(specifiedChannelFormat))
+			return specifiedChannelFormat;
+
+		return Config.formats.get("global");
+	}
+
 
 	@ApiStatus.Internal
 	public void setupChannels() {
-		this.registerChannel("global", null);
-
 		for (String channel : Config.channels.keySet()) {
 			String permission = Config.channels.get(channel);
 
@@ -146,12 +160,15 @@ public class ChannelService {
 
 			this.channelShortcuts.put(channel, Config.channelShortcuts.get(channel));
 		}
+
+		if (!channels.containsKey("global"))
+			this.registerChannel("global", null);
 	}
 
 	@ApiStatus.Internal
 	public void clearChannels() {
-		channels = Map.of();
-		channelShortcuts = Map.of();
+		channels.clear();
+		channelShortcuts.clear();
 	}
 
 

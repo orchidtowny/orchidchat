@@ -64,6 +64,8 @@ dependencies {
     shadow('net.kyori:adventure-text-minimessage:[5.1.1,)')
     shadow('net.kyori:adventure-text-serializer-gson:[5.1.1,)')
 
+    shadow('com.google.code.gson:gson:[2.1.4,)')
+
     compileOnly fg.deobf('net.luckperms:api:5.4')
 }
 

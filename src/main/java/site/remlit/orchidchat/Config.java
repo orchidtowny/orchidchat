@@ -1,12 +1,20 @@
 package site.remlit.orchidchat;
 
-import net.minecraftforge.common.ForgeConfigSpec;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.mojang.logging.LogUtils;
+import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import site.remlit.orchidchat.model.config.Configuration;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -15,71 +23,64 @@ import java.util.Map;
 		bus = Mod.EventBusSubscriber.Bus.MOD
 )
 public final class Config {
+	// jank config setup because the default forge one wasn't what i wanted.
 
-	private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
-
-
-	private static final ForgeConfigSpec.ConfigValue<String> FORMAT = BUILDER
-			.comment("""
-					 Format to use for chat, MiniMessage allowed.
-					
-					 Placeholders:
-					 %name% - Player's name
-					 %msg% - Message
-					
-					 %luckperms_prefix% - LuckPerms prefix
-					 %luckperms_suffix% - LuckPerms suffix
-					 %luckperms_meta_<value>% - LuckPerms meta value
-					""")
-			.define(
-					"format",
-					"<gray>" +
-							"<hover:show_text:\"<yellow>%luckperms_meta_rankDescription%\">%luckperms_prefix%</hover>" +
-							"<click:run_command:\"msg %name%\">%name%</click>" +
-							"%luckperms_suffix%" +
-							" <dark_gray>» " +
-							"<white>%luckperms_meta_chatcolor%%msg%"
-			);
-
-	private static final ForgeConfigSpec.ConfigValue<Map<@NotNull String, @Nullable String>> CHANNELS = BUILDER
-			.comment("""
-					 Chat channels to create. A global channel everyone can talk in is always available.
-					 First string ID, second is required permission (leave blank to require no permission).
-					""")
-			.define(
-					"channels",
-					Map.of(
-							"staff", "orchidchat.channel.staff"
-					)
-			);
-
-	private static final ForgeConfigSpec.ConfigValue<Map<@NotNull String, @NotNull List<String>>> CHANNEL_SHORTCUTS = BUILDER
-			.comment("""
-					 Chat shortcuts to quickly send a message in a channel.
-					 If a message starts with one of these, it will be sent in that channel.
-					""")
-			.define(
-					"channel_shortcuts",
-					Map.of(
-							"global", List.of("g;", "global;", "gen;", "general;"),
-							"staff", List.of("s;", "sc;", "st;", "staff;")
-					)
-			);
+	private static final @NotNull Logger LOGGER = LogUtils.getLogger();
 
 
-	static final ForgeConfigSpec SPEC = BUILDER.build();
-
-
-	public static String format;
+	public static Map<String, String> formats;
 	public static Map<String, String> channels;
 	public static Map<String, List<String>> channelShortcuts;
 
 
+	private static final @NotNull Path configPath = Path.of("config/orchidchat.json");
+	private static final @NotNull Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+	private static @NotNull Configuration cfg = new Configuration();
+
+
+	@ApiStatus.Internal
+	public static void writeMemoryConfig() {
+		try {
+			Files.write(configPath, gson.toJson(cfg).getBytes());
+		} catch (IOException e) {
+			LOGGER.error("Writing config from memory failed. {}", e.getMessage());
+		}
+	}
+
+	@ApiStatus.Internal
+	public static void readFileConfig() {
+		try {
+			String string = Files.readString(configPath);
+			cfg = gson.fromJson(string, Configuration.class);
+		} catch (IOException e) {
+			LOGGER.error("Reading config from file failed. {}", e.getMessage());
+		}
+	}
+
+
+	public static void loadConfig() {
+		try {
+			LOGGER.info("Loading configuration at {}", configPath.toAbsolutePath());
+
+			if (!configPath.toFile().exists()) {
+				Files.createFile(configPath);
+				writeMemoryConfig();
+			}
+
+			readFileConfig();
+		} catch (IOException e) {
+			LOGGER.error("Failed to load config: {}", e.getMessage());
+		}
+
+		formats = cfg.formats;
+		channels = cfg.channels;
+		channelShortcuts = cfg.channelShortcuts;
+	}
+
+
 	@SubscribeEvent
 	static void onLoad(final ModConfigEvent event) {
-		format = FORMAT.get();
-		channels = CHANNELS.get();
-		channelShortcuts = CHANNEL_SHORTCUTS.get();
+		loadConfig();
 	}
 
 }
