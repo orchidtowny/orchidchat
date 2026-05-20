@@ -33,7 +33,7 @@ public final class ChannelShortcutsCommand {
 		);
 
 		command.getSource().sendSystemMessage(
-				c2mc(mm("<dark_green>There are " + channels.size() + " available channel shortcuts:"))
+				c2mc(mm("<dark_green>There are " + channels.size() + " available channel(s):"))
 		);
 
 		for (String channel : channels) {
