@@ -1,4 +1,4 @@
-package site.remlit.orchidchat.service;
+package site.remlit.azaleachat.service;
 
 import com.mojang.logging.LogUtils;
 import net.luckperms.api.model.user.User;
@@ -8,8 +8,8 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
-import site.remlit.orchidchat.Config;
-import site.remlit.orchidchat.model.DeterminedChannel;
+import site.remlit.azaleachat.Config;
+import site.remlit.azaleachat.model.DeterminedChannel;
 
 import java.util.*;
 

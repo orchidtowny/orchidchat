@@ -1,4 +1,4 @@
-package site.remlit.orchidchat;
+package site.remlit.azaleachat;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -6,7 +6,7 @@ import com.mojang.logging.LogUtils;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
-import site.remlit.orchidchat.model.config.Configuration;
+import site.remlit.azaleachat.model.config.Configuration;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -26,7 +26,7 @@ public final class Config {
 	public static Map<String, List<String>> channelShortcuts;
 
 
-	private static final @NotNull Path configPath = Path.of("config/orchidchat.json");
+	private static final @NotNull Path configPath = Path.of("config/azaleachat.json");
 	private static final @NotNull Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 	private static @NotNull Configuration cfg = new Configuration();
 

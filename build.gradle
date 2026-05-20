@@ -105,8 +105,8 @@ build {
 shadowJar {
     configurations = [project.configurations.shadow]
 
-    relocate 'com.google', 'site.remlit.orchidchat.lib.com.google'
-    relocate 'net.kyori', 'site.remlit.orchidchat.lib.net.kyori'
+    relocate 'com.google', 'site.remlit.azaleachat.lib.com.google'
+    relocate 'net.kyori', 'site.remlit.azaleachat.lib.net.kyori'
 
     finalizedBy 'reobfShadowJar'
 }

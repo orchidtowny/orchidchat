@@ -1,4 +1,4 @@
-package site.remlit.orchidchat;
+package site.remlit.azaleachat;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.logging.LogUtils;
@@ -11,23 +11,21 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
-import site.remlit.orchidchat.command.ChannelCommand;
-import site.remlit.orchidchat.command.ChannelShortcutsCommand;
-import site.remlit.orchidchat.service.ChannelService;
-import site.remlit.orchidchat.service.ChatService;
-import site.remlit.orchidchat.service.ComponentService;
-import site.remlit.orchidchat.service.LuckPermsService;
-import site.remlit.orchidchat.subscriber.ModConfigEventSubscriber;
-import site.remlit.orchidchat.subscriber.ServerChatEventSubscriber;
+import site.remlit.azaleachat.command.ChannelCommand;
+import site.remlit.azaleachat.command.ChannelShortcutsCommand;
+import site.remlit.azaleachat.service.ChannelService;
+import site.remlit.azaleachat.service.LuckPermsService;
+import site.remlit.azaleachat.subscriber.ModConfigEventSubscriber;
+import site.remlit.azaleachat.subscriber.ServerChatEventSubscriber;
 
-@Mod(OrchidChat.MODID)
-public final class OrchidChat {
+@Mod(AzaleaChat.MODID)
+public final class AzaleaChat {
 
-	public static final @NotNull String MODID = "orchidchat";
+	public static final @NotNull String MODID = "azaleachat";
 	private static final @NotNull Logger LOGGER = LogUtils.getLogger();
 
 
-	public OrchidChat() {
+	public AzaleaChat() {
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 

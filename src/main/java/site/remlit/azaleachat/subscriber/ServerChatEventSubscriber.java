@@ -1,4 +1,4 @@
-package site.remlit.orchidchat.subscriber;
+package site.remlit.azaleachat.subscriber;
 
 import com.mojang.logging.LogUtils;
 import net.luckperms.api.cacheddata.CachedMetaData;
@@ -11,10 +11,10 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
-import site.remlit.orchidchat.model.DeterminedChannel;
-import site.remlit.orchidchat.service.ChannelService;
-import site.remlit.orchidchat.service.ChatService;
-import site.remlit.orchidchat.service.LuckPermsService;
+import site.remlit.azaleachat.model.DeterminedChannel;
+import site.remlit.azaleachat.service.ChannelService;
+import site.remlit.azaleachat.service.ChatService;
+import site.remlit.azaleachat.service.LuckPermsService;
 
 import java.util.List;
 import java.util.Objects;

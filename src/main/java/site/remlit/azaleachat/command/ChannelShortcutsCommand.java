@@ -1,4 +1,4 @@
-package site.remlit.orchidchat.command;
+package site.remlit.azaleachat.command;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
@@ -6,12 +6,12 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import org.jetbrains.annotations.NotNull;
-import site.remlit.orchidchat.service.ChannelService;
+import site.remlit.azaleachat.service.ChannelService;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
-import static site.remlit.orchidchat.service.ComponentService.*;
+import static site.remlit.azaleachat.service.ComponentService.*;
 
 public final class ChannelShortcutsCommand {
 	public static void register(@NotNull CommandDispatcher<CommandSourceStack> dispatcher) {

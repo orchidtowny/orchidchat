@@ -1,4 +1,4 @@
-package site.remlit.orchidchat.model;
+package site.remlit.azaleachat.model;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

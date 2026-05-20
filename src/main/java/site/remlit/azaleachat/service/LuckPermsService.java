@@ -1,4 +1,4 @@
-package site.remlit.orchidchat.service;
+package site.remlit.azaleachat.service;
 
 import com.mojang.logging.LogUtils;
 import net.luckperms.api.LuckPerms;

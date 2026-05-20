@@ -1,4 +1,4 @@
-package site.remlit.orchidchat.model.config;
+package site.remlit.azaleachat.model.config;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -19,7 +19,7 @@ public class Configuration {
 	 * */
 	public Map<@NotNull String, @NotNull String> channels = Map.of(
 			"global", "",
-			"staff", "orchidchat.channel.staff"
+			"staff", "azaleachat.channel.staff"
 	);
 
 	public Map<@NotNull String, @NotNull List<String>> channelShortcuts = Map.of(

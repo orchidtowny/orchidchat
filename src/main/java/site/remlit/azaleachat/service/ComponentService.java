@@ -1,4 +1,4 @@
-package site.remlit.orchidchat.service;
+package site.remlit.azaleachat.service;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
